@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Hikaye Navigasyonu -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{{ url_for('story', story_id=story.id) }}" class="text-decoration-none">
+                            {{ story.title }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">Bölüm {{ chapter.chapter_number }}: {{ chapter.title }}</li>
+                </ol>
+            </nav>
+
+            <!-- Bölüm İçeriği -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h1 class="mb-0">{{ chapter.title }}</h1>
+                        <div class="chapter-stats text-muted">
+                            <i class="fas fa-eye me-1"></i> {{ chapter.views }}
+                            <i class="fas fa-comment ms-3 me-1"></i> {{ chapter.comments|length }}
+                        </div>
+                    </div>
+
+                    <div class="chapter-content mb-4">
+                        {{ chapter.content | safe }}
+                    </div>
+
+                    <!-- Bölüm Navigasyonu -->
+                    <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                        {% if prev_chapter %}
+                        <a href="{{ url_for('chapter', story_id=story.id, chapter_id=prev_chapter.id) }}" 
+                           class="btn btn-outline-primary">
+                            <i class="fas fa-chevron-left me-2"></i>
+                            Önceki Bölüm
+                        </a>
+                        {% else %}
+                        <div></div>
+                        {% endif %}
+
+                        {% if next_chapter %}
+                        <a href="{{ url_for('chapter', story_id=story.id, chapter_id=next_chapter.id) }}" 
+                           class="btn btn-outline-primary">
+                            Sonraki Bölüm
+                            <i class="fas fa-chevron-right ms-2"></i>
+                        </a>
+                        {% else %}
+                        <div></div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Yorumlar -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Yorumlar</h5>
+                </div>
+                <div class="card-body">
+                    {% if current_user.is_authenticated %}
+                    <form action="{{ url_for('chapter_comment', story_id=story.id, chapter_id=chapter.id) }}" 
+                          method="POST" class="mb-4">
+                        <div class="mb-3">
+                            <textarea class="form-control" name="content" rows="3" required 
+                                      placeholder="Yorumunuzu yazın..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Yorum Yap</button>
+                    </form>
+                    {% endif %}
+
+                    {% for comment in chapter.comments %}
+                    <div class="d-flex mb-3">
+                        <img class="rounded-circle me-2" 
+                             src="{{ url_for('static', filename='profile_pics/' + comment.user.image_file) }}" 
+                             alt="Profile Picture" width="32">
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">{{ comment.user.username }}</h6>
+                                <small class="text-muted">{{ comment.date_posted.strftime('%d.%m.%Y %H:%M') }}</small>
+                            </div>
+                            <p class="mb-0">{{ comment.content }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block styles %}
+<style>
+.chapter-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.chapter-stats {
+    font-size: 0.9rem;
+}
+
+.chapter-stats i {
+    width: 16px;
+    text-align: center;
+}
+</style>
+{% endblock %}
+
+{% endblock %}

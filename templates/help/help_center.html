@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Sol Menü -->
+        <div class="col-lg-3">
+            <div class="list-group shadow-sm">
+                <a href="{{ url_for('faq') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-question-circle"></i> Sıkça Sorulan Sorular
+                </a>
+                <a href="{{ url_for('help_center') }}" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-life-ring"></i> Yardım Merkezi
+                </a>
+                <a href="{{ url_for('privacy') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-shield-alt"></i> Gizlilik Politikası
+                </a>
+                <a href="{{ url_for('terms') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-gavel"></i> Kullanım Şartları
+                </a>
+                <a href="{{ url_for('contact') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-envelope"></i> İletişim
+                </a>
+            </div>
+        </div>
+
+        <!-- Ana İçerik -->
+        <div class="col-lg-9">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="mb-0">Yardım Merkezi</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Hızlı Yardım -->
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-headset fa-3x text-primary mb-3"></i>
+                                    <h5>Teknik Destek</h5>
+                                    <p class="mb-0">7/24 teknik destek ekibimiz size yardımcı olmaya hazır.</p>
+                                    <a href="#" class="btn btn-primary mt-3">Destek Al</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-book fa-3x text-success mb-3"></i>
+                                    <h5>Rehberler</h5>
+                                    <p class="mb-0">Detaylı kullanım rehberleri ve öğretici içerikler.</p>
+                                    <a href="#" class="btn btn-success mt-3">Rehberleri Gör</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card h-100">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-comments fa-3x text-info mb-3"></i>
+                                    <h5>Topluluk</h5>
+                                    <p class="mb-0">Diğer yazarlarla iletişime geçin ve deneyim paylaşın.</p>
+                                    <a href="#" class="btn btn-info mt-3">Topluluğa Katıl</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sık Karşılaşılan Sorunlar -->
+                    <h5 class="mb-3">Sık Karşılaşılan Sorunlar</h5>
+                    <div class="accordion" id="problemsAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#problem1">
+                                    Giriş yapamıyorum
+                                </button>
+                            </h2>
+                            <div id="problem1" class="accordion-collapse collapse show" data-bs-parent="#problemsAccordion">
+                                <div class="accordion-body">
+                                    <ol>
+                                        <li>Şifrenizi sıfırlayın</li>
+                                        <li>Tarayıcı önbelleğini temizleyin</li>
+                                        <li>Farklı tarayıcı deneyin</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#problem2">
+                                    İçerik yüklenmiyor
+                                </button>
+                            </h2>
+                            <div id="problem2" class="accordion-collapse collapse" data-bs-parent="#problemsAccordion">
+                                <div class="accordion-body">
+                                    <ol>
+                                        <li>Sayfayı yenileyin</li>
+                                        <li>İnternet bağlantınızı kontrol edin</li>
+                                        <li>Tarayıcıyı güncelleyin</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- İletişim -->
+                    <h5 class="mt-4 mb-3">İletişim Kanalları</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6><i class="fas fa-envelope me-2"></i>Email</h6>
+                                    <p class="mb-0">support@storynest.com</p>
+                                    <small class="text-muted">Yanıt süresi: 24 saat</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6><i class="fas fa-clock me-2"></i>Çalışma Saatleri</h6>
+                                    <p class="mb-0">09:00-18:00 (GMT+3)</p>
+                                    <small class="text-muted">Pazartesi - Cuma</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

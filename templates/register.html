@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Kayıt Ol{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card auth-card">
+            <div class="card-body p-4 p-md-5">
+                <div class="text-center mb-4">
+                    <div class="auth-icon-circle mb-3">
+                        <i class="fas fa-user-plus fa-2x"></i>
+                    </div>
+                    <h2 class="card-title">Aramıza Katılın</h2>
+                    <p class="text-muted">Hikayelerinizi paylaşmaya başlayın</p>
+                </div>
+
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+                    <div class="form-floating mb-3">
+                        {{ form.username(class="form-control", placeholder="Kullanıcı Adı") }}
+                        <label for="username">Kullanıcı Adı</label>
+                        {% if form.username.errors %}
+                            {% for error in form.username.errors %}
+                                <small class="text-danger">{{ error }}</small>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        {{ form.email(class="form-control", placeholder="E-posta") }}
+                        <label for="email">E-posta Adresi</label>
+                        {% if form.email.errors %}
+                            {% for error in form.email.errors %}
+                                <small class="text-danger">{{ error }}</small>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        {{ form.password(class="form-control", placeholder="Şifre") }}
+                        <label for="password">Şifre</label>
+                        {% if form.password.errors %}
+                            {% for error in form.password.errors %}
+                                <small class="text-danger">{{ error }}</small>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="form-floating mb-4">
+                        {{ form.confirm_password(class="form-control", placeholder="Şifre Tekrar") }}
+                        <label for="confirm_password">Şifre Tekrar</label>
+                        {% if form.confirm_password.errors %}
+                            {% for error in form.confirm_password.errors %}
+                                <small class="text-danger">{{ error }}</small>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
+                    </div>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="mb-0">Zaten hesabınız var mı? 
+                        <a href="{{ url_for('login') }}" class="text-primary text-decoration-none">
+                            Giriş Yapın
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

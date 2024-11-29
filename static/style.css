@@ -1,0 +1,259 @@
+/* Renk Değişkenleri */
+:root {
+    --primary-color: #1e88e5;
+    --primary-light: #4b9fea;
+    --primary-dark: #1565c0;
+    --secondary-color: #64b5f6;
+    --accent-color: #2962ff;
+    --text-primary: #2c3e50;
+    --text-secondary: #546e7a;
+    --background-light: #f8f9fa;
+    --background-white: #ffffff;
+    --shadow-color: rgba(30, 136, 229, 0.1);
+}
+
+/* Genel Stiller */
+body {
+    background-color: var(--background-light);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text-primary);
+}
+
+/* Navbar Stilleri */
+.navbar {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark)) !important;
+    padding: 1rem 0;
+    box-shadow: 0 2px 15px var(--shadow-color);
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white !important;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.nav-link {
+    color: rgba(255,255,255,0.9) !important;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    color: white !important;
+    transform: translateY(-2px);
+}
+
+/* Welcome Banner */
+.welcome-banner {
+    background: linear-gradient(135deg, var(--primary-light), var(--primary-color)) !important;
+    color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+/* Kart Stilleri */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px var(--shadow-color);
+    transition: all 0.3s ease;
+    background: var(--background-white);
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px var(--shadow-color);
+}
+
+.card-title {
+    color: var(--primary-dark);
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Buton Stilleri */
+.btn {
+    border-radius: 25px;
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    border: none;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-color);
+}
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Kategori Butonları */
+.btn-category {
+    color: var(--primary-color);
+    background: var(--background-light);
+    border: 1px solid var(--primary-light);
+    margin-bottom: 0.5rem;
+    text-align: left;
+    transition: all 0.3s ease;
+}
+
+.btn-category:hover {
+    background: var(--primary-light);
+    color: white;
+    transform: translateX(5px);
+}
+
+/* Badge Stilleri */
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.85rem;
+    background: var(--primary-light) !important;
+    box-shadow: 0 2px 5px var(--shadow-color);
+}
+
+/* Form Stilleri */
+.form-control {
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e3f2fd;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.2rem var(--shadow-color);
+    border-color: var(--primary-color);
+}
+
+/* Arama Çubuğu */
+.search-form .form-control {
+    background-color: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+}
+
+.search-form .form-control::placeholder {
+    color: rgba(255,255,255,0.7);
+}
+
+/* Footer */
+.footer {
+    background: linear-gradient(135deg, var(--primary-dark), var(--primary-color));
+    color: white;
+    padding: 3rem 0;
+    margin-top: 4rem;
+}
+
+.footer a {
+    color: white;
+    transition: all 0.3s ease;
+}
+
+.footer a:hover {
+    color: var(--secondary-color);
+    transform: translateY(-2px);
+}
+
+/* İkon Stilleri */
+.icon-circle {
+    background: var(--primary-light);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+}
+
+/* Kimlik Doğrulama Sayfaları */
+.auth-card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px var(--shadow-color);
+    margin-top: 3rem;
+    background: linear-gradient(to bottom right, var(--background-white), var(--background-light));
+}
+
+.auth-icon-circle {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 5px 15px var(--shadow-color);
+}
+
+.form-floating > .form-control:focus ~ label,
+.form-floating > .form-control:not(:placeholder-shown) ~ label {
+    color: var(--primary-color);
+    opacity: 0.8;
+}
+
+.form-floating > .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem var(--shadow-color);
+}
+
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Animasyonlar */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Responsive Düzenlemeler */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.5rem 1rem;
+    }
+    
+    .card {
+        margin: 1rem 0;
+    }
+    
+    .btn {
+        padding: 0.4rem 1.2rem;
+    }
+    
+    .welcome-banner {
+        padding: 2rem 1rem !important;
+    }
+}

@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        tinymce.init({
+            selector: '#content',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            language: 'tr',
+            height: 500,
+            menubar: true,
+            statusbar: true,
+            branding: false,
+            promotion: false,
+            setup: function(editor) {
+                editor.on('change', function() {
+                    editor.save();
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Yeni Hikaye Oluştur</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('write_story') }}" enctype="multipart/form-data">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {% if form.title.errors %}
+                                {{ form.title(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.title.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.title(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.category.label(class="form-label") }}
+                            {% if form.category.errors %}
+                                {{ form.category(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.category.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.category(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.summary.label(class="form-label") }}
+                            {% if form.summary.errors %}
+                                {{ form.summary(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.summary.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.summary(class="form-control", rows="3") }}
+                            {% endif %}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.cover_image.label(class="form-label") }}
+                            {% if form.cover_image.errors %}
+                                {{ form.cover_image(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.cover_image.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.cover_image(class="form-control") }}
+                            {% endif %}
+                            <small class="text-muted">Önerilen boyut: 800x450 piksel. İzin verilen formatlar: JPG, JPEG, PNG</small>
+                        </div>
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                            <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">İptal</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

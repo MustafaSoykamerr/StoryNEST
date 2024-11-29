@@ -1,4 +1,3 @@
-[TR]
 # 📚 StoryNEST
 
 StoryNEST, yazarların hikayelerini paylaşabileceği, birlikte yazabileceği ve keşfedebileceği bir platformdur.
@@ -95,7 +94,6 @@ Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICE
 
 ---
 
-[EN]
 # 📚 StoryNEST - Collaborative Story Writing Platform
 
 StoryNEST is a platform where writers can share, collaborate on, and discover stories.

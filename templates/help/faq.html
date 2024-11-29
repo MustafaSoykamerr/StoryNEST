@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Sol Menü -->
+        <div class="col-lg-3">
+            <div class="list-group shadow-sm">
+                <a href="{{ url_for('faq') }}" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-question-circle"></i> Sıkça Sorulan Sorular
+                </a>
+                <a href="{{ url_for('help_center') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-life-ring"></i> Yardım Merkezi
+                </a>
+                <a href="{{ url_for('privacy') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-shield-alt"></i> Gizlilik Politikası
+                </a>
+                <a href="{{ url_for('terms') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-gavel"></i> Kullanım Şartları
+                </a>
+                <a href="{{ url_for('contact') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-envelope"></i> İletişim
+                </a>
+            </div>
+        </div>
+
+        <!-- Ana İçerik -->
+        <div class="col-lg-9">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="mb-0">Sıkça Sorulan Sorular</h4>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="faqAccordion">
+                        <!-- Hikaye Yazma -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    📝 Hikaye Yazma
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    <h5>Nasıl hikaye yazabilirim?</h5>
+                                    <p>1. Giriş yapın veya hesap oluşturun<br>
+                                       2. "Yeni Hikaye" butonuna tıklayın<br>
+                                       3. Hikaye bilgilerini doldurun<br>
+                                       4. İlk bölümü yazın ve yayınlayın</p>
+
+                                    <h5>Hikayemi düzenleyebilir miyim?</h5>
+                                    <p>Evet, hikayenizin yazarı veya editörü iseniz düzenleme yapabilirsiniz.</p>
+
+                                    <h5>Hikayemi silebilir miyim?</h5>
+                                    <p>Evet, hikayenizin sahibi iseniz silebilirsiniz.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ortak Yazarlık -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    👥 Ortak Yazarlık
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    <h5>Nasıl ortak yazar ekleyebilirim?</h5>
+                                    <p>1. Hikaye sayfanızda "Yazar Ekle" butonuna tıklayın<br>
+                                       2. Kullanıcı adını girin<br>
+                                       3. Rolünü seçin<br>
+                                       4. Daveti gönderin</p>
+
+                                    <h5>Hangi roller mevcut?</h5>
+                                    <ul>
+                                        <li>Yazar: Bölüm ekleyebilir ve düzenleyebilir</li>
+                                        <li>Editör: Düzenleme yapabilir</li>
+                                        <li>Çevirmen: Çeviri yapabilir</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hesap -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    🔒 Hesap
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    <h5>Şifremi nasıl değiştirebilirim?</h5>
+                                    <p>1. Profil ayarlarına gidin<br>
+                                       2. "Şifre Değiştir" seçeneğini seçin<br>
+                                       3. Yeni şifrenizi belirleyin</p>
+
+                                    <h5>Hesabımı nasıl silebilirim?</h5>
+                                    <p>1. Profil ayarlarına gidin<br>
+                                       2. "Hesabı Sil" seçeneğini seçin<br>
+                                       3. Onaylayın</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

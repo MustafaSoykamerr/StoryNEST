@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Hikaye Detayları -->
+        <div class="col-lg-8">
+            <!-- Hikaye Kapağı ve Özet -->
+            <div class="card mb-4 shadow-sm">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="{{ url_for('static', filename='story_covers/' + story.cover_image) }}" 
+                             class="img-fluid rounded-start" alt="Story Cover">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h1 class="card-title">{{ story.title }}</h1>
+                                {% if current_user == story.author %}
+                                <div class="dropdown">
+                                    <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('edit_story', story_id=story.id) }}">
+                                                <i class="fas fa-edit"></i> Düzenle
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <button class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                                <i class="fas fa-trash"></i> Sil
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <p class="card-text">{{ story.summary }}</p>
+                            <div class="d-flex align-items-center mb-3">
+                                <img class="rounded-circle me-2" 
+                                     src="{{ url_for('static', filename='profile_pics/' + story.author.image_file) }}" 
+                                     alt="Profile Picture" width="32">
+                                <div>
+                                    <a href="{{ url_for('profile', username=story.author.username) }}" 
+                                       class="text-decoration-none">{{ story.author.username }}</a>
+                                    <small class="text-muted d-block">
+                                        {{ story.date_posted.strftime('%d %B %Y') }}
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="story-stats">
+                                <span class="me-3" title="Görüntülenme"><i class="fas fa-eye"></i> {{ story.views }}</span>
+                                <span class="me-3" title="Beğeni"><i class="fas fa-heart"></i> {{ story.likes|length }}</span>
+                                <span class="me-3" title="Yorum"><i class="fas fa-comment"></i> {{ story.comments|length }}</span>
+                                <span title="Kategori"><i class="fas fa-bookmark"></i> {{ story.category }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bölümler -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Bölümler</h5>
+                    {% if current_user == story.author or current_user in story.collaborators %}
+                    <a href="{{ url_for('add_chapter', story_id=story.id) }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus"></i> Yeni Bölüm
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for chapter in story.chapters|sort(attribute='chapter_number') %}
+                    <a href="{{ url_for('chapter', story_id=story.id, chapter_id=chapter.id) }}" 
+                       class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">Bölüm {{ chapter.chapter_number }}: {{ chapter.title }}</h6>
+                            <small class="text-muted">{{ chapter.date_posted.strftime('%d.%m.%Y') }}</small>
+                        </div>
+                        <small class="text-muted">
+                            <i class="fas fa-eye"></i> {{ chapter.views }}
+                            <i class="fas fa-comment ms-2"></i> {{ chapter.comments|length }}
+                        </small>
+                    </a>
+                    {% else %}
+                    <div class="list-group-item text-center text-muted">
+                        Henüz bölüm eklenmemiş.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Yorumlar -->
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">Yorumlar</h5>
+                </div>
+                <div class="card-body">
+                    {% if current_user.is_authenticated %}
+                    <form action="{{ url_for('comment', story_id=story.id) }}" method="POST" class="mb-4">
+                        <div class="mb-3">
+                            <textarea class="form-control" name="content" rows="3" required 
+                                      placeholder="Yorumunuzu yazın..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Yorum Yap</button>
+                    </form>
+                    {% endif %}
+
+                    {% for comment in story.comments|sort(attribute='date_posted', reverse=true) %}
+                    <div class="d-flex mb-3">
+                        <img class="rounded-circle me-2" 
+                             src="{{ url_for('static', filename='profile_pics/' + comment.author.image_file) }}" 
+                             alt="Profile Picture" width="32">
+                        <div class="flex-grow-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <a href="{{ url_for('profile', username=comment.author.username) }}" 
+                                       class="text-decoration-none fw-bold">{{ comment.author.username }}</a>
+                                    <small class="text-muted ms-2">
+                                        {{ comment.date_posted.strftime('%d.%m.%Y %H:%M') }}
+                                    </small>
+                                </div>
+                                {% if current_user == comment.author %}
+                                <button class="btn btn-link btn-sm text-danger p-0" 
+                                        onclick="deleteComment({{ comment.id }})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                            <p class="mb-0">{{ comment.content }}</p>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="text-center text-muted">Henüz yorum yapılmamış.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Sidebar -->
+        <div class="col-lg-4">
+            <!-- Yazarlar -->
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Yazarlar</h5>
+                    {% if current_user == story.author %}
+                    <a href="{{ url_for('add_collaborator', story_id=story.id) }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-user-plus"></i> Yazar Ekle
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="list-group list-group-flush">
+                    <!-- Ana Yazar -->
+                    <div class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <img class="rounded-circle me-2" 
+                                 src="{{ url_for('static', filename='profile_pics/' + story.author.image_file) }}" 
+                                 alt="Profile Picture" width="32">
+                            <div>
+                                <a href="{{ url_for('profile', username=story.author.username) }}" 
+                                   class="text-decoration-none">{{ story.author.username }}</a>
+                                <small class="text-muted d-block">Ana Yazar</small>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Ortak Yazarlar -->
+                    {% for collaborator in story.collaborators %}
+                    <div class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <img class="rounded-circle me-2" 
+                                 src="{{ url_for('static', filename='profile_pics/' + collaborator.user.image_file) }}" 
+                                 alt="Profile Picture" width="32">
+                            <div>
+                                <a href="{{ url_for('profile', username=collaborator.user.username) }}" 
+                                   class="text-decoration-none">{{ collaborator.user.username }}</a>
+                                <small class="text-muted d-block">{{ collaborator.role|title }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- İstatistikler -->
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h5 class="mb-0">İstatistikler</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <h4>{{ story.views }}</h4>
+                            <small class="text-muted">Görüntülenme</small>
+                        </div>
+                        <div class="col-4">
+                            <h4>{{ story.likes|length }}</h4>
+                            <small class="text-muted">Beğeni</small>
+                        </div>
+                        <div class="col-4">
+                            <h4>{{ story.chapters|length }}</h4>
+                            <small class="text-muted">Bölüm</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Hikayeyi Sil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bu hikayeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <form action="{{ url_for('delete_story', story_id=story.id) }}" method="POST" class="d-inline">
+                    <button type="submit" class="btn btn-danger">Sil</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function deleteComment(commentId) {
+    if (confirm('Bu yorumu silmek istediğinizden emin misiniz?')) {
+        fetch(`/comment/${commentId}/delete`, {
+            method: 'POST',
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            }
+        });
+    }
+}
+</script>
+{% endblock %}

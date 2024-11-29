@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Sol Menü -->
+        <div class="col-lg-3">
+            <div class="list-group shadow-sm">
+                <a href="{{ url_for('faq') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-question-circle"></i> Sıkça Sorulan Sorular
+                </a>
+                <a href="{{ url_for('help_center') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-life-ring"></i> Yardım Merkezi
+                </a>
+                <a href="{{ url_for('privacy') }}" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-shield-alt"></i> Gizlilik Politikası
+                </a>
+                <a href="{{ url_for('terms') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-gavel"></i> Kullanım Şartları
+                </a>
+                <a href="{{ url_for('contact') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-envelope"></i> İletişim
+                </a>
+            </div>
+        </div>
+
+        <!-- Ana İçerik -->
+        <div class="col-lg-9">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="mb-0">Gizlilik Politikası (KVKK)</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Veri Sorumlusu -->
+                    <section class="mb-4">
+                        <h5><i class="fas fa-user-shield me-2"></i>Veri Sorumlusu</h5>
+                        <p>StoryNEST platformu olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca kişisel verilerinizi işliyoruz.</p>
+                    </section>
+
+                    <!-- Toplanan Veriler -->
+                    <section class="mb-4">
+                        <h5><i class="fas fa-database me-2"></i>Toplanan Veriler</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <i class="fas fa-id-card me-2"></i>
+                                Kimlik bilgileri (ad, soyad, kullanıcı adı)
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-envelope me-2"></i>
+                                İletişim bilgileri (e-posta adresi)
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-image me-2"></i>
+                                Profil fotoğrafı
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-file-alt me-2"></i>
+                                Kullanıcı tarafından oluşturulan içerikler
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-chart-line me-2"></i>
+                                Sistem kullanım verileri
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- Veri İşleme Amaçları -->
+                    <section class="mb-4">
+                        <h5><i class="fas fa-tasks me-2"></i>Veri İşleme Amaçları</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-user-circle me-2"></i>Hesap Yönetimi</h6>
+                                        <p class="mb-0">Hesap oluşturma ve yönetimi için gerekli işlemler</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-cogs me-2"></i>Platform Hizmetleri</h6>
+                                        <p class="mb-0">Temel platform özelliklerinin sağlanması</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-shield-alt me-2"></i>Güvenlik</h6>
+                                        <p class="mb-0">Platform ve kullanıcı güvenliğinin sağlanması</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-bell me-2"></i>İletişim</h6>
+                                        <p class="mb-0">Bilgilendirme ve iletişim amaçlı kullanım</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Veri Güvenliği -->
+                    <section class="mb-4">
+                        <h5><i class="fas fa-lock me-2"></i>Veri Saklama ve Güvenlik</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <i class="fas fa-server me-2"></i>
+                                Veriler Türkiye'deki sunucularda saklanır
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                Endüstri standardı güvenlik önlemleri uygulanır
+                            </li>
+                            <li class="list-group-item">
+                                <i class="fas fa-clock me-2"></i>
+                                Veriler yalnızca gerekli süre boyunca saklanır
+                            </li>
+                        </ul>
+                    </section>
+
+                    <!-- Kullanıcı Hakları -->
+                    <section>
+                        <h5><i class="fas fa-user-check me-2"></i>Kullanıcı Hakları</h5>
+                        <p>KVKK kapsamında aşağıdaki haklara sahipsiniz:</p>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-info-circle me-2"></i>Bilgi Talebi</h6>
+                                        <p class="mb-0">Verileriniz hakkında bilgi talep etme hakkı</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-edit me-2"></i>Düzeltme</h6>
+                                        <p class="mb-0">Yanlış verileri düzeltme hakkı</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6><i class="fas fa-trash me-2"></i>Silme</h6>
+                                        <p class="mb-0">Verilerinizin silinmesini talep etme hakkı</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

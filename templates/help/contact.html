@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Sol Menü -->
+        <div class="col-lg-3">
+            <div class="list-group shadow-sm">
+                <a href="{{ url_for('faq') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-question-circle"></i> Sıkça Sorulan Sorular
+                </a>
+                <a href="{{ url_for('help_center') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-life-ring"></i> Yardım Merkezi
+                </a>
+                <a href="{{ url_for('privacy') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-shield-alt"></i> Gizlilik Politikası
+                </a>
+                <a href="{{ url_for('terms') }}" class="list-group-item list-group-item-action">
+                    <i class="fas fa-gavel"></i> Kullanım Şartları
+                </a>
+                <a href="{{ url_for('contact') }}" class="list-group-item list-group-item-action active">
+                    <i class="fas fa-envelope"></i> İletişim
+                </a>
+            </div>
+        </div>
+
+        <!-- Ana İçerik -->
+        <div class="col-lg-9">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h4 class="mb-0">İletişim</h4>
+                </div>
+                <div class="card-body">
+                    <!-- İletişim Formu -->
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <form>
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Adınız</label>
+                                    <input type="text" class="form-control" id="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">E-posta Adresiniz</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="subject" class="form-label">Konu</label>
+                                    <select class="form-select" id="subject" required>
+                                        <option value="">Seçiniz...</option>
+                                        <option value="technical">Teknik Destek</option>
+                                        <option value="account">Hesap İşlemleri</option>
+                                        <option value="copyright">Telif Hakkı</option>
+                                        <option value="other">Diğer</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Mesajınız</label>
+                                    <textarea class="form-control" id="message" rows="5" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-paper-plane me-2"></i>Gönder
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- İletişim Bilgileri -->
+                        <div class="col-lg-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-4">İletişim Bilgileri</h5>
+                                    
+                                    <div class="mb-4">
+                                        <h6><i class="fas fa-envelope me-2"></i>E-posta</h6>
+                                        <p class="mb-0">soykamermustafa033@gmail.com</p>
+                                        <small class="text-muted">Yanıt süresi: En Geç 24 saat</small>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <h6><i class="fas fa-clock me-2"></i>Çalışma Saatleri</h6>
+                                        <p class="mb-0">Pazartesi - Cuma</p>
+                                        <small class="text-muted">09:00 - 18:00 (GMT+3)</small>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <h6><i class="fas fa-map-marker-alt me-2"></i>Adres</h6>
+                                        <p class="mb-0">İstanbul, Türkiye</p>
+                                    </div>
+
+                                    <div>
+                                        <h6><i class="fas fa-share-alt me-2"></i>Sosyal Medya</h6>
+                                        <div class="social-links">
+                                            <a href="#" class="text-dark me-3"><i class="fab fa-twitter"></i></a>
+                                            <a href="#" class="text-dark me-3"><i class="fab fa-instagram"></i></a>
+                                            <a href="#" class="text-dark me-3"><i class="fab fa-facebook"></i></a>
+                                            <a href="#" class="text-dark"><i class="fab fa-linkedin"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SSS Kartı -->
+                            <div class="card mt-4">
+                                <div class="card-body">
+                                    <h5 class="card-title">Sıkça Sorulan Sorular</h5>
+                                    <p class="card-text">Sorularınızın cevaplarını SSS sayfamızda bulabilirsiniz.</p>
+                                    <a href="{{ url_for('faq') }}" class="btn btn-outline-primary">
+                                        <i class="fas fa-question-circle me-2"></i>SSS'ye Git
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

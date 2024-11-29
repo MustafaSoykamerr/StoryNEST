@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Hikaye Düzenle{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <h2 class="mb-4">Hikaye Düzenle</h2>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="title" class="form-label">Başlık</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ story.title }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="category" class="form-label">Kategori</label>
+                <select class="form-select" id="category" name="category" required>
+                    {% for category in categories %}
+                    <option value="{{ category }}" {% if story.category == category %}selected{% endif %}>{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="content" class="form-label">Hikaye</label>
+                <textarea class="form-control" id="content" name="content" rows="10" required>{{ story.content }}</textarea>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-primary">Güncelle</button>
+                <a href="{{ url_for('story', story_id=story.id) }}" class="btn btn-secondary">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

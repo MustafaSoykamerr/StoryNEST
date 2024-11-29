@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Arama Sonuçları{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Arama Sonuçları: "{{ query }}"</h2>
+    
+    {% if stories %}
+        {% for story in stories %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title">{{ story.title }}</h5>
+                    <span class="badge bg-primary">{{ story.category }}</span>
+                </div>
+                <h6 class="card-subtitle mb-2 text-muted">Yazar: {{ story.author.username }}</h6>
+                <p class="card-text">{{ story.content[:200] }}{% if story.content|length > 200 %}...{% endif %}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">{{ story.date_posted.strftime('%d-%m-%Y %H:%M') }}</small>
+                    <a href="{{ url_for('story', story_id=story.id) }}" class="btn btn-primary">Devamını Oku</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">
+            Aramanızla eşleşen hikaye bulunamadı.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

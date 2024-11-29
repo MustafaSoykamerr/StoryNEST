@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Sol Menü -->
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="settings-nav">
+                        <div class="nav-header p-3">
+                            <div class="text-center">
+                                <div class="position-relative d-inline-block">
+                                    <img src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}" 
+                                         class="rounded-circle profile-image" 
+                                         alt="Profile Picture"
+                                         width="80" 
+                                         height="80">
+                                    <button class="btn btn-sm btn-primary position-absolute bottom-0 end-0 rounded-circle p-1"
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#changePhotoModal"
+                                            title="Fotoğrafı Değiştir">
+                                        <i class="fas fa-camera fa-sm"></i>
+                                    </button>
+                                </div>
+                                <h6 class="mt-2 mb-0">{{ current_user.username }}</h6>
+                                <small class="text-muted">{{ current_user.email }}</small>
+                            </div>
+                        </div>
+                        <div class="list-group list-group-flush settings-menu">
+                            <a href="#profile" class="list-group-item list-group-item-action active" data-bs-toggle="list">
+                                <i class="fas fa-user me-2"></i>Profil Bilgileri
+                            </a>
+                            <a href="#security" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                                <i class="fas fa-lock me-2"></i>Güvenlik
+                            </a>
+                            <a href="#notifications" class="list-group-item list-group-item-action" data-bs-toggle="list">
+                                <i class="fas fa-bell me-2"></i>Bildirimler
+                            </a>
+                            <a href="#danger" class="list-group-item list-group-item-action text-danger" data-bs-toggle="list">
+                                <i class="fas fa-exclamation-triangle me-2"></i>Tehlikeli Bölge
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ İçerik -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    <div class="tab-content">
+                        <!-- Profil Bilgileri -->
+                        <div class="tab-pane fade show active" id="profile">
+                            <h5 class="card-title mb-4">Profil Bilgileri</h5>
+                            <form method="POST" action="{{ url_for('update_profile') }}">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="username" class="form-label">Kullanıcı Adı</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                            <input type="text" class="form-control" id="username" name="username" 
+                                                   value="{{ current_user.username }}" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="email" class="form-label">E-posta</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                            <input type="email" class="form-control" id="email" name="email" 
+                                                   value="{{ current_user.email }}" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Değişiklikleri Kaydet
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Güvenlik -->
+                        <div class="tab-pane fade" id="security">
+                            <h5 class="card-title mb-4">Şifre Değiştir</h5>
+                            <form method="POST" action="{{ url_for('change_password') }}">
+                                <div class="mb-3">
+                                    <label for="current_password" class="form-label">Mevcut Şifre</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                        <input type="password" class="form-control" id="current_password" 
+                                               name="current_password" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="new_password" class="form-label">Yeni Şifre</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                        <input type="password" class="form-control" id="new_password" 
+                                               name="new_password" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="confirm_password" class="form-label">Yeni Şifre (Tekrar)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                        <input type="password" class="form-control" id="confirm_password" 
+                                               name="confirm_password" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-key me-2"></i>Şifreyi Değiştir
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Bildirimler -->
+                        <div class="tab-pane fade" id="notifications">
+                            <h5 class="card-title mb-4">Bildirim Ayarları</h5>
+                            <form method="POST" action="{{ url_for('update_notifications') }}">
+                                <div class="list-group mb-4">
+                                    <label class="list-group-item d-flex gap-2">
+                                        <input class="form-check-input flex-shrink-0" type="checkbox" 
+                                               name="email_notifications" 
+                                               {% if current_user.email_notifications %}checked{% endif %}>
+                                        <span>
+                                            <strong>E-posta Bildirimleri</strong>
+                                            <small class="d-block text-muted">Önemli güncellemeler hakkında e-posta al</small>
+                                        </span>
+                                    </label>
+                                    <label class="list-group-item d-flex gap-2">
+                                        <input class="form-check-input flex-shrink-0" type="checkbox" 
+                                               name="like_notifications"
+                                               {% if current_user.like_notifications %}checked{% endif %}>
+                                        <span>
+                                            <strong>Beğeni Bildirimleri</strong>
+                                            <small class="d-block text-muted">Hikayeleriniz beğenildiğinde bildirim al</small>
+                                        </span>
+                                    </label>
+                                    <label class="list-group-item d-flex gap-2">
+                                        <input class="form-check-input flex-shrink-0" type="checkbox" 
+                                               name="comment_notifications"
+                                               {% if current_user.comment_notifications %}checked{% endif %}>
+                                        <span>
+                                            <strong>Yorum Bildirimleri</strong>
+                                            <small class="d-block text-muted">Hikayelerinize yorum yapıldığında bildirim al</small>
+                                        </span>
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i>Ayarları Kaydet
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Tehlikeli Bölge -->
+                        <div class="tab-pane fade" id="danger">
+                            <div class="text-center py-4">
+                                <div class="danger-icon mb-3">
+                                    <i class="fas fa-exclamation-triangle fa-3x text-danger"></i>
+                                </div>
+                                <h5 class="text-danger mb-3">Hesabı Sil</h5>
+                                <p class="text-muted mb-4">
+                                    Bu işlem geri alınamaz. Hesabınız ve tüm verileriniz kalıcı olarak silinecektir.
+                                </p>
+                                <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                    <i class="fas fa-trash-alt me-2"></i>Hesabımı Sil
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Profil Fotoğrafı Modal -->
+<div class="modal fade" id="changePhotoModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Profil Fotoğrafını Değiştir</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('update_photo') }}" enctype="multipart/form-data">
+                    <div class="text-center mb-4">
+                        <img src="{{ url_for('static', filename='profile_pics/' + current_user.image_file) }}" 
+                             class="rounded-circle preview-image" 
+                             width="150" 
+                             height="150"
+                             alt="Profile Picture">
+                    </div>
+                    <div class="mb-3">
+                        <label for="photo" class="form-label">Yeni Fotoğraf Seç</label>
+                        <input type="file" class="form-control" id="photo" name="photo" 
+                               accept="image/*" required>
+                        <div class="form-text">
+                            PNG, JPG veya GIF. Maksimum 5MB.
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-upload me-2"></i>Yükle
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hesap Silme Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center pb-4">
+                <i class="fas fa-exclamation-circle text-danger fa-4x mb-3"></i>
+                <h4 class="modal-title text-danger mb-3">Hesabınızı Silmek İstediğinize Emin Misiniz?</h4>
+                <p class="text-muted mb-4">
+                    Bu işlem geri alınamaz. Tüm hikayeleriniz, yorumlarınız ve diğer verileriniz kalıcı olarak silinecektir.
+                </p>
+                <form method="POST" action="{{ url_for('delete_account') }}">
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Güvenlik için şifrenizi girin</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="form-check mb-4">
+                        <input class="form-check-input" type="checkbox" id="confirm_delete" name="confirm_delete" required>
+                        <label class="form-check-label" for="confirm_delete">
+                            Hesabımı kalıcı olarak silmek istediğimi onaylıyorum
+                        </label>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash-alt me-2"></i>Hesabımı Kalıcı Olarak Sil
+                        </button>
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">İptal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block styles %}
+<style>
+.settings-nav {
+    border-radius: 0.5rem;
+}
+
+.nav-header {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.profile-image {
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.settings-menu .list-group-item {
+    border: none;
+    padding: 0.8rem 1rem;
+}
+
+.settings-menu .list-group-item:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.1);
+}
+
+.settings-menu .list-group-item.active {
+    background-color: var(--bs-primary);
+    color: white;
+}
+
+.preview-image {
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.danger-icon {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto;
+    background: rgba(var(--bs-danger-rgb), 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .settings-nav {
+        margin-bottom: 1rem;
+    }
+}
+</style>
+{% endblock %}
