@@ -87,11 +87,6 @@ flask run
 
 Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
 
-## 📞 İletişim
-
-- Website: [storynest.com](https://storynest.com)
-- Email: support@storynest.com
-
 ---
 
 # 📚 StoryNEST - Collaborative Story Writing Platform
@@ -182,11 +177,6 @@ flask run
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Contact
-
-- Website: [storynest.com](https://storynest.com)
-- Email: support@storynest.com
 
 ---
 ⭐️ If you like this project, don't forget to give it a star!
