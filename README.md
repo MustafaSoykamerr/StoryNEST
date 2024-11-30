@@ -32,8 +32,8 @@ StoryNEST, yazarların hikayelerini paylaşabileceği, birlikte yazabileceği ve
 
 1. Repoyu klonlayın:
 ```bash
-git clone https://github.com/yourusername/storynest.git
-cd storynest
+git clone https://github.com/MustafaSoykamerr/StoryNEST.git
+cd StoryNEST
 ```
 
 2. Sanal ortam oluşturun ve aktifleştirin:
@@ -123,8 +123,8 @@ StoryNEST is a platform where writers can share, collaborate on, and discover st
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/storynest.git
-cd storynest
+git clone https://github.com/MustafaSoykamerr/StoryNEST.git
+cd StoryNEST
 ```
 
 2. Create and activate virtual environment:
