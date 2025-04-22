@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}Ortak Yazar Ekle{% endblock %}
-
 {% block content %}
-<div class="container mt-4">
+<div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Ortak Yazar Ekle</h4>
+                <div class="card-header">
+                    <h4 class="mb-0">{{ story.title }} - Ortak Yazar Ekle</h4>
                 </div>
                 <div class="card-body">
                     <form method="POST">
                         {{ form.hidden_tag() }}
+                        
+                        <!-- Kullanıcı Adı -->
                         <div class="mb-3">
                             {{ form.username.label(class="form-label") }}
                             {% if form.username.errors %}
@@ -23,26 +23,74 @@
                                     {% endfor %}
                                 </div>
                             {% else %}
-                                {{ form.username(class="form-control") }}
+                                {{ form.username(class="form-control", placeholder="Kullanıcı adını girin") }}
                             {% endif %}
-                            <small class="text-muted">Ortak yazar olarak eklemek istediğiniz kullanıcının kullanıcı adını girin.</small>
                         </div>
+                        
+                        <!-- Rol -->
                         <div class="mb-3">
                             {{ form.role.label(class="form-label") }}
                             {% if form.role.errors %}
-                                {{ form.role(class="form-control is-invalid") }}
+                                {{ form.role(class="form-select is-invalid") }}
                                 <div class="invalid-feedback">
                                     {% for error in form.role.errors %}
                                         <span>{{ error }}</span>
                                     {% endfor %}
                                 </div>
                             {% else %}
-                                {{ form.role(class="form-control") }}
+                                {{ form.role(class="form-select") }}
+                            {% endif %}
+                            <div class="form-text">
+                                <small>
+                                    <strong>Ortak Yazar:</strong> Hikayeye bölüm ekleyebilir ve düzenleyebilir<br>
+                                    <strong>Editör:</strong> Hikayeyi düzenleyebilir<br>
+                                    <strong>Çevirmen:</strong> Hikayeyi başka bir dile çevirebilir
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <!-- Çeviri Dili -->
+                        <div class="mb-3" id="language-group" style="display: none;">
+                            {{ form.language.label(class="form-label") }}
+                            {% if form.language.errors %}
+                                {{ form.language(class="form-select is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.language.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.language(class="form-select") }}
                             {% endif %}
                         </div>
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">Ortak Yazar Ekle</button>
+                        
+                        <!-- İzinler -->
+                        <div class="mb-3" id="permissions-group">
+                            {{ form.permissions.label(class="form-label") }}
+                            <div class="permissions-container">
+                                {% for value, label in form.permissions.choices %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="permissions" 
+                                           value="{{ value }}" id="{{ value }}">
+                                    <label class="form-check-label" for="{{ value }}">
+                                        {{ label }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% if form.permissions.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in form.permissions.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Butonlar -->
+                        <div class="d-flex justify-content-between">
                             <a href="{{ url_for('story', story_id=story.id) }}" class="btn btn-secondary">İptal</a>
+                            {{ form.submit(class="btn btn-primary") }}
                         </div>
                     </form>
                 </div>
@@ -50,4 +98,73 @@
         </div>
     </div>
 </div>
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const roleSelect = document.getElementById('role');
+    const languageGroup = document.getElementById('language-group');
+    const permissionsGroup = document.getElementById('permissions-group');
+    const permissionInputs = document.querySelectorAll('input[name="permissions"]');
+    
+    function updateFormBasedOnRole() {
+        const selectedRole = roleSelect.value;
+        
+        // Dil seçimi alanını göster/gizle
+        if (selectedRole === 'translator') {
+            languageGroup.style.display = 'block';
+        } else {
+            languageGroup.style.display = 'none';
+        }
+        
+        // Varsayılan izinleri ayarla
+        permissionInputs.forEach(input => {
+            input.checked = false;
+            
+            if (selectedRole === 'author') {
+                if (input.value === 'can_edit' || input.value === 'can_add_chapter') {
+                    input.checked = true;
+                }
+            } else if (selectedRole === 'editor') {
+                if (input.value === 'can_edit') {
+                    input.checked = true;
+                }
+            } else if (selectedRole === 'translator') {
+                if (input.value === 'can_translate') {
+                    input.checked = true;
+                }
+            }
+        });
+    }
+    
+    roleSelect.addEventListener('change', updateFormBasedOnRole);
+    updateFormBasedOnRole(); // Initial state
+});
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+.permissions-container {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.form-check {
+    margin-bottom: 0.5rem;
+}
+
+.form-check:last-child {
+    margin-bottom: 0;
+}
+
+.form-text {
+    margin-top: 0.5rem;
+    color: #6c757d;
+}
+</style>
+{% endblock %}
+
 {% endblock %}

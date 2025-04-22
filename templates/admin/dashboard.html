@@ -1,0 +1,174 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Yönetim Paneli</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <a href="{{ url_for('home') }}" class="btn btn-sm btn-outline-secondary">Siteye Dön</a>
+        </div>
+    </div>
+</div>
+
+<!-- Genel İstatistikler -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card card-stats mb-4 mb-xl-0">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="card-title text-uppercase text-muted mb-0">Kullanıcılar</h5>
+                        <span class="h2 font-weight-bold mb-0">{{ total_users }}</span>
+                    </div>
+                    <div class="col-auto">
+                        <div class="stat-icon stat-users text-white rounded-circle">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card card-stats mb-4 mb-xl-0">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="card-title text-uppercase text-muted mb-0">Hikayeler</h5>
+                        <span class="h2 font-weight-bold mb-0">{{ total_stories }}</span>
+                    </div>
+                    <div class="col-auto">
+                        <div class="stat-icon stat-stories text-white rounded-circle">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card card-stats mb-4 mb-xl-0">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="card-title text-uppercase text-muted mb-0">Beğeniler</h5>
+                        <span class="h2 font-weight-bold mb-0">{{ total_likes }}</span>
+                    </div>
+                    <div class="col-auto">
+                        <div class="stat-icon stat-likes text-white rounded-circle">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card card-stats mb-4 mb-xl-0">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="card-title text-uppercase text-muted mb-0">Yorumlar</h5>
+                        <span class="h2 font-weight-bold mb-0">{{ total_comments }}</span>
+                    </div>
+                    <div class="col-auto">
+                        <div class="stat-icon stat-comments text-white rounded-circle">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Son Eklenen Kullanıcılar -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-transparent">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h6 class="text-uppercase text-muted ls-1 mb-1">Kullanıcılar</h6>
+                        <h5 class="mb-0">Son Kaydolanlar</h5>
+                    </div>
+                    <div class="col text-right">
+                        <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-primary">Tümünü Gör</a>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-items-center table-flush">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Kullanıcı</th>
+                            <th scope="col">E-posta</th>
+                            <th scope="col">Kayıt Tarihi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in recent_users %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ url_for('static', filename='profile_pics/' + user.image_file) }}" 
+                                         class="rounded-circle me-2" 
+                                         width="32" height="32"
+                                         alt="{{ user.username }}">
+                                    <a href="{{ url_for('admin_user_detail', user_id=user.id) }}">{{ user.username }}</a>
+                                </div>
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.created_at.strftime('%d.%m.%Y') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Son Eklenen Hikayeler -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-transparent">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h6 class="text-uppercase text-muted ls-1 mb-1">Hikayeler</h6>
+                        <h5 class="mb-0">Son Eklenenler</h5>
+                    </div>
+                    <div class="col text-right">
+                        <a href="{{ url_for('admin_stories') }}" class="btn btn-sm btn-primary">Tümünü Gör</a>
+                    </div>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-items-center table-flush">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Başlık</th>
+                            <th scope="col">Yazar</th>
+                            <th scope="col">Kategori</th>
+                            <th scope="col">Eklenme Tarihi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for story in recent_stories %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('story', story_id=story.id) }}">{{ story.title }}</a>
+                            </td>
+                            <td>{{ story.author.username }}</td>
+                            <td>{{ story.category }}</td>
+                            <td>{{ story.date_posted.strftime('%d.%m.%Y') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

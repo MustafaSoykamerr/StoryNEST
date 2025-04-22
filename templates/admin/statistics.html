@@ -1,0 +1,313 @@
+{% extends "admin/base.html" %}
+
+{% block title %}İstatistikler{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Site İstatistikleri</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.print()">
+            <i class="fas fa-print me-1"></i> Yazdır
+        </button>
+    </div>
+</div>
+
+<!-- Genel İstatistikler -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="card-title text-uppercase text-muted mb-0">Kullanıcılar</h5>
+                        <span class="h2 font-weight-bold mb-0">{{ total_users }}</span>
+                    </div>
+                    <div class="col-auto">
+                        <div class="stat-icon stat-users text-white rounded-circle">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="card-title text-uppercase text-muted mb-0">Hikayeler</h5>
+                        <span class="h2 font-weight-bold mb-0">{{ total_stories }}</span>
+                    </div>
+                    <div class="col-auto">
+                        <div class="stat-icon stat-stories text-white rounded-circle">
+                            <i class="fas fa-book"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="card-title text-uppercase text-muted mb-0">Bölümler</h5>
+                        <span class="h2 font-weight-bold mb-0">{{ total_chapters }}</span>
+                    </div>
+                    <div class="col-auto">
+                        <div class="stat-icon bg-info text-white rounded-circle">
+                            <i class="fas fa-bookmark"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <h5 class="card-title text-uppercase text-muted mb-0">Yorumlar</h5>
+                        <span class="h2 font-weight-bold mb-0">{{ total_comments }}</span>
+                    </div>
+                    <div class="col-auto">
+                        <div class="stat-icon stat-comments text-white rounded-circle">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Grafik: Kullanıcı Kaydı Trendi -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold">Kullanıcı Kaydı Trendi</h6>
+            </div>
+            <div class="card-body">
+                <div style="height: 300px;">
+                    <canvas id="userRegistrationChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Grafik: Hikaye Kategorileri -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold">Hikaye Kategorileri</h6>
+            </div>
+            <div class="card-body">
+                <div style="height: 300px;">
+                    <canvas id="storyCategoriesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Grafik: Hikaye Durumları -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold">Hikaye Durumları</h6>
+            </div>
+            <div class="card-body">
+                <div style="height: 300px;">
+                    <canvas id="storyStatusChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- En Aktif Kullanıcılar -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold">En Aktif Kullanıcılar</h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-items-center table-flush mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Kullanıcı</th>
+                            <th scope="col">Son Giriş</th>
+                            <th scope="col">Hikaye</th>
+                            <th scope="col">Yorum</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in active_users %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ url_for('static', filename='profile_pics/' + user.image_file) }}" 
+                                         class="rounded-circle me-2" 
+                                         width="32" height="32"
+                                         alt="{{ user.username }}">
+                                    <a href="{{ url_for('admin_user_detail', user_id=user.id) }}">{{ user.username }}</a>
+                                </div>
+                            </td>
+                            <td>{{ user.last_login.strftime('%d.%m.%Y %H:%M') }}</td>
+                            <td>{{ user.stories|length }}</td>
+                            <td>{{ user.comments|length }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- En Popüler Hikayeler -->
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold">En Popüler Hikayeler</h6>
+            </div>
+            <div class="table-responsive">
+                <table class="table align-items-center table-flush mb-0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">Başlık</th>
+                            <th scope="col">Yazar</th>
+                            <th scope="col">Kategori</th>
+                            <th scope="col">Durum</th>
+                            <th scope="col">Görüntülenme</th>
+                            <th scope="col">Beğeni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for story in popular_stories %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('story', story_id=story.id) }}">{{ story.title }}</a>
+                            </td>
+                            <td>{{ story.author.username }}</td>
+                            <td>{{ story.category }}</td>
+                            <td>
+                                {% if story.status == 'ongoing' %}
+                                <span class="badge bg-info">Devam Ediyor</span>
+                                {% elif story.status == 'completed' %}
+                                <span class="badge bg-success">Tamamlandı</span>
+                                {% elif story.status == 'hiatus' %}
+                                <span class="badge bg-warning">Ara Verildi</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ story.views }}</td>
+                            <td>{{ story.likes|length }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Jinja değişkenlerini JS değişkenlerine çevir
+    const months = JSON.parse('{{ months|tojson|safe }}');
+    const monthlyRegistrations = JSON.parse('{{ monthly_registrations|tojson|safe }}');
+    const categories = JSON.parse('{{ categories|tojson|safe }}');
+    const categoryCounts = JSON.parse('{{ category_counts|tojson|safe }}');
+    const statusCounts = JSON.parse('{{ status_counts|tojson|safe }}');
+    
+    // Kullanıcı Kaydı Trendi Grafiği
+    const userChart = new Chart(document.getElementById('userRegistrationChart'), {
+        type: 'line',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Yeni Kullanıcılar',
+                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                borderColor: 'rgba(78, 115, 223, 1)',
+                pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                pointBorderColor: '#fff',
+                pointHoverBackgroundColor: '#fff',
+                pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
+                data: monthlyRegistrations,
+                fill: true
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
+    // Hikaye Kategorileri Grafiği
+    const categoryChart = new Chart(document.getElementById('storyCategoriesChart'), {
+        type: 'doughnut',
+        data: {
+            labels: categories,
+            datasets: [{
+                data: categoryCounts,
+                backgroundColor: [
+                    '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', 
+                    '#e74a3b', '#6f42c1', '#5a5c69', '#858796'
+                ],
+                hoverBackgroundColor: [
+                    '#2e59d9', '#17a673', '#2c9faf', '#dda20a', 
+                    '#be2617', '#5d36a4', '#4e4f58', '#6e707e'
+                ],
+                hoverBorderColor: "rgba(234, 236, 244, 1)"
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+    
+    // Hikaye Durumları Grafiği
+    const statusChart = new Chart(document.getElementById('storyStatusChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Devam Ediyor', 'Tamamlandı', 'Ara Verildi'],
+            datasets: [{
+                data: statusCounts,
+                backgroundColor: ['#36b9cc', '#1cc88a', '#f6c23e'],
+                hoverBackgroundColor: ['#2c9faf', '#17a673', '#dda20a'],
+                hoverBorderColor: "rgba(234, 236, 244, 1)"
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right'
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %} 

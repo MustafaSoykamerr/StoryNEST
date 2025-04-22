@@ -1,0 +1,260 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Hikaye Detayı{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Hikaye Detayı</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('admin_stories') }}" class="btn btn-sm btn-outline-secondary me-2">
+            <i class="fas fa-arrow-left me-1"></i> Hikayelere Dön
+        </a>
+        <a href="{{ url_for('admin_story_edit', story_id=story.id) }}" class="btn btn-sm btn-primary">
+            <i class="fas fa-edit me-1"></i> Düzenle
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Hikaye Detay Kartı -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow">
+            <div class="card-body text-center">
+                <img src="{{ url_for('static', filename='story_covers/' + story.cover_image) }}" 
+                     class="img-fluid mb-3 rounded" 
+                     style="max-height: 200px; max-width: 100%;"
+                     alt="{{ story.title }}">
+                <h4 class="mb-1">{{ story.title }}</h4>
+                <p class="text-muted">{{ story.category }}</p>
+                
+                {% if story.status == 'ongoing' %}
+                <span class="badge bg-info mb-3">Devam Ediyor</span>
+                {% elif story.status == 'completed' %}
+                <span class="badge bg-success mb-3">Tamamlandı</span>
+                {% elif story.status == 'hiatus' %}
+                <span class="badge bg-warning mb-3">Ara Verildi</span>
+                {% endif %}
+                
+                <div class="d-grid gap-2 mt-3">
+                    <a href="{{ url_for('story', story_id=story.id) }}" class="btn btn-sm btn-outline-info" target="_blank">
+                        <i class="fas fa-external-link-alt me-1"></i> Hikayeyi Görüntüle
+                    </a>
+                    <a href="{{ url_for('admin_story_edit', story_id=story.id) }}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-edit me-1"></i> Hikayeyi Düzenle
+                    </a>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteStoryModal">
+                        <i class="fas fa-trash me-1"></i> Hikayeyi Sil
+                    </button>
+                </div>
+            </div>
+            <div class="card-footer bg-light">
+                <div class="row text-center">
+                    <div class="col">
+                        <span class="d-block">{{ story.views }}</span>
+                        <small class="text-muted">Görüntülenme</small>
+                    </div>
+                    <div class="col">
+                        <span class="d-block">{{ story.likes|length }}</span>
+                        <small class="text-muted">Beğeni</small>
+                    </div>
+                    <div class="col">
+                        <span class="d-block">{{ story.comments|length }}</span>
+                        <small class="text-muted">Yorum</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Delete Story Modal -->
+        <div class="modal fade" id="deleteStoryModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Hikayeyi Sil</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>
+                            <strong>{{ story.title }}</strong> hikayesini silmek istediğinize emin misiniz?
+                            Bu işlem geri alınamaz ve hikayenin tüm bölümleri ve yorumları silinecektir.
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <form action="{{ url_for('admin_story_delete', story_id=story.id) }}" method="POST">
+                            <button type="submit" class="btn btn-danger">Hikayeyi Sil</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Hikaye Durumu Değiştir -->
+        <div class="card shadow mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">Hikaye Durumu</h6>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('admin_story_toggle_status', story_id=story.id) }}" method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Durum</label>
+                        <select name="status" class="form-select">
+                            <option value="ongoing" {% if story.status == 'ongoing' %}selected{% endif %}>Devam Ediyor</option>
+                            <option value="completed" {% if story.status == 'completed' %}selected{% endif %}>Tamamlandı</option>
+                            <option value="hiatus" {% if story.status == 'hiatus' %}selected{% endif %}>Ara Verildi</option>
+                        </select>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Durumu Güncelle</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Hikaye Bilgileri -->
+        <div class="card shadow mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">Hikaye Bilgileri</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <small class="text-muted d-block">ID</small>
+                    <div>{{ story.id }}</div>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Yazar</small>
+                    <div>
+                        <a href="{{ url_for('admin_user_detail', user_id=story.user_id) }}">{{ story.author.username }}</a>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Eklenme Tarihi</small>
+                    <div>{{ story.date_posted.strftime('%d.%m.%Y %H:%M') }}</div>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Kategori</small>
+                    <div>{{ story.category }}</div>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Bölüm Sayısı</small>
+                    <div>{{ story.chapters|length }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Sağ Taraf -->
+    <div class="col-lg-8">
+        <!-- Özet -->
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">Hikaye Özeti</h6>
+            </div>
+            <div class="card-body">
+                <p>{{ story.summary }}</p>
+            </div>
+        </div>
+        
+        <!-- Bölümler -->
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">Bölümler</h6>
+            </div>
+            <div class="table-responsive">
+                {% if story.chapters %}
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Bölüm No</th>
+                            <th>Başlık</th>
+                            <th>Tarih</th>
+                            <th>Görüntülenme</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for chapter in story.chapters|sort(attribute='chapter_number') %}
+                        <tr>
+                            <td>{{ chapter.chapter_number }}</td>
+                            <td>
+                                <a href="{{ url_for('story', story_id=story.id) }}#chapter-{{ chapter.chapter_number }}" target="_blank">{{ chapter.title }}</a>
+                            </td>
+                            <td>{{ chapter.date_posted.strftime('%d.%m.%Y') }}</td>
+                            <td>{{ chapter.views }}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteChapterModal{{ chapter.id }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                
+                                <!-- Delete Chapter Modal -->
+                                <div class="modal fade" id="deleteChapterModal{{ chapter.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Bölümü Sil</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>"{{ chapter.title }}" bölümünü silmek istediğinize emin misiniz?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                                <form action="{{ url_for('admin_chapter_delete', chapter_id=chapter.id) }}" method="POST">
+                                                    <button type="submit" class="btn btn-danger">Bölümü Sil</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-book-open fa-3x text-muted mb-3"></i>
+                    <p class="mb-0">Bu hikayeye henüz bölüm eklenmemiş.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Yorumlar -->
+        <div class="card shadow">
+            <div class="card-header">
+                <h6 class="mb-0">Yorumlar</h6>
+            </div>
+            <div class="card-body">
+                {% if story.comments %}
+                <div class="list-group">
+                    {% for comment in story.comments %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">
+                                <a href="{{ url_for('admin_user_detail', user_id=comment.user_id) }}">{{ comment.author.username }}</a>
+                            </h6>
+                            <small>{{ comment.date_posted.strftime('%d.%m.%Y %H:%M') }}</small>
+                        </div>
+                        <p class="mb-1">{{ comment.content }}</p>
+                        <div class="text-end">
+                            <form action="{{ url_for('delete_comment', comment_id=comment.id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i> Yorumu Sil
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-comment fa-3x text-muted mb-3"></i>
+                    <p class="mb-0">Bu hikaye henüz yorum almamış.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

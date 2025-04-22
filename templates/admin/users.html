@@ -1,0 +1,129 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Kullanıcı Yönetimi{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Kullanıcı Yönetimi</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="input-group me-2">
+            <input type="text" id="userSearch" class="form-control form-control-sm" placeholder="Kullanıcı ara...">
+            <button class="btn btn-sm btn-outline-secondary" type="button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-header bg-transparent">
+        <h5 class="mb-0">Tüm Kullanıcılar</h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-items-center table-flush" id="usersTable">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Kullanıcı</th>
+                    <th scope="col">E-posta</th>
+                    <th scope="col">Kayıt Tarihi</th>
+                    <th scope="col">Son Giriş</th>
+                    <th scope="col">Durum</th>
+                    <th scope="col">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img src="{{ url_for('static', filename='profile_pics/' + user.image_file) }}" 
+                                 class="rounded-circle me-2" 
+                                 width="32" height="32"
+                                 alt="{{ user.username }}">
+                            <div>
+                                <span class="d-block">{{ user.username }}</span>
+                                {% if user.is_admin %}
+                                <span class="badge bg-primary">Admin</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                    <td>{{ user.last_login.strftime('%d.%m.%Y %H:%M') }}</td>
+                    <td>
+                        <span class="badge bg-success">Aktif</span>
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{{ url_for('admin_user_detail', user_id=user.id) }}" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('admin_user_edit', user_id=user.id) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            {% if not user.is_admin or current_user.id != user.id %}
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal{{ user.id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            
+                            <!-- Delete User Modal -->
+                            <div class="modal fade" id="deleteUserModal{{ user.id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Kullanıcıyı Sil</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>
+                                                <strong>{{ user.username }}</strong> kullanıcısını silmek istediğinize emin misiniz?
+                                                Bu işlem geri alınamaz ve kullanıcının tüm içerikleri silinecektir.
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                            <form action="{{ url_for('admin_user_delete', user_id=user.id) }}" method="POST">
+                                                <button type="submit" class="btn btn-danger">Kullanıcıyı Sil</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('userSearch');
+    const usersTable = document.getElementById('usersTable');
+    const rows = usersTable.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    
+    searchInput.addEventListener('keyup', function() {
+        const query = searchInput.value.toLowerCase();
+        
+        for (let i = 0; i < rows.length; i++) {
+            const username = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
+            const email = rows[i].getElementsByTagName('td')[2].textContent.toLowerCase();
+            
+            if (username.includes(query) || email.includes(query)) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    });
+});
+</script>
+{% endblock %} 

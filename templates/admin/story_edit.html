@@ -1,0 +1,120 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Hikaye Düzenle{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Hikaye Düzenle</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('admin_story_detail', story_id=story.id) }}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Hikaye Detayına Dön
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold">{{ story.title }} Hikayesini Düzenle</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin_story_edit', story_id=story.id) }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Hikaye Başlığı</label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ story.title }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Kategori</label>
+                        <select class="form-select" id="category" name="category" required>
+                            <option value="Fantastik" {% if story.category == 'Fantastik' %}selected{% endif %}>Fantastik</option>
+                            <option value="Bilim Kurgu" {% if story.category == 'Bilim Kurgu' %}selected{% endif %}>Bilim Kurgu</option>
+                            <option value="Romantik" {% if story.category == 'Romantik' %}selected{% endif %}>Romantik</option>
+                            <option value="Macera" {% if story.category == 'Macera' %}selected{% endif %}>Macera</option>
+                            <option value="Gizem" {% if story.category == 'Gizem' %}selected{% endif %}>Gizem</option>
+                            <option value="Korku" {% if story.category == 'Korku' %}selected{% endif %}>Korku</option>
+                            <option value="Dram" {% if story.category == 'Dram' %}selected{% endif %}>Dram</option>
+                            <option value="Diğer" {% if story.category == 'Diğer' %}selected{% endif %}>Diğer</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Durum</label>
+                        <select class="form-select" id="status" name="status" required>
+                            <option value="ongoing" {% if story.status == 'ongoing' %}selected{% endif %}>Devam Ediyor</option>
+                            <option value="completed" {% if story.status == 'completed' %}selected{% endif %}>Tamamlandı</option>
+                            <option value="hiatus" {% if story.status == 'hiatus' %}selected{% endif %}>Ara Verildi</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="summary" class="form-label">Hikaye Özeti</label>
+                        <textarea class="form-control" id="summary" name="summary" rows="5" required>{{ story.summary }}</textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="cover_image" class="form-label">Kapak Resmi (Değiştirmek istemiyorsanız boş bırakın)</label>
+                        <input type="file" class="form-control" id="cover_image" name="cover_image" accept="image/*">
+                        <div class="form-text">Maksimum boyut: 2MB. Desteklenen formatlar: JPG, JPEG, PNG.</div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                        <a href="{{ url_for('admin_story_detail', story_id=story.id) }}" class="btn btn-secondary">İptal</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold">Mevcut Kapak Resmi</h6>
+            </div>
+            <div class="card-body text-center">
+                <img src="{{ url_for('static', filename='story_covers/' + story.cover_image) }}" 
+                     class="img-fluid rounded mb-3" 
+                     style="max-height: 250px;" 
+                     alt="{{ story.title }}">
+                <p class="mb-0 small text-muted">Şu anki kapak resmi</p>
+            </div>
+        </div>
+        
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold">Hikaye Bilgileri</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <small class="text-muted d-block">Yazar</small>
+                    <div>
+                        <a href="{{ url_for('admin_user_detail', user_id=story.user_id) }}">{{ story.author.username }}</a>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Eklenme Tarihi</small>
+                    <div>{{ story.date_posted.strftime('%d.%m.%Y %H:%M') }}</div>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Bölüm Sayısı</small>
+                    <div>{{ story.chapters|length }} bölüm</div>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Görüntülenme</small>
+                    <div>{{ story.views }}</div>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Beğeni</small>
+                    <div>{{ story.likes|length }}</div>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Yorum</small>
+                    <div>{{ story.comments|length }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

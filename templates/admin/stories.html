@@ -1,0 +1,171 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Hikaye Yönetimi{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Hikaye Yönetimi</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="input-group me-2">
+            <input type="text" id="storySearch" class="form-control form-control-sm" placeholder="Hikaye ara...">
+            <button class="btn btn-sm btn-outline-secondary" type="button">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+    <div>
+        <a href="{{ url_for('admin_create_test_story') }}" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Test Hikayesi Oluştur
+        </a>
+    </div>
+</div>
+
+<div class="card shadow">
+    <div class="card-header bg-transparent">
+        <div class="row align-items-center">
+            <div class="col">
+                <h5 class="mb-0">Tüm Hikayeler</h5>
+            </div>
+            <div class="col-auto">
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-filter me-1"></i> Filtrele
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                        <li><a class="dropdown-item filter-item" href="#" data-filter="all">Tümü</a></li>
+                        <li><a class="dropdown-item filter-item" href="#" data-filter="ongoing">Devam Ediyor</a></li>
+                        <li><a class="dropdown-item filter-item" href="#" data-filter="completed">Tamamlandı</a></li>
+                        <li><a class="dropdown-item filter-item" href="#" data-filter="hiatus">Ara Verildi</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table align-items-center table-flush" id="storiesTable">
+            <thead class="thead-light">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Başlık</th>
+                    <th scope="col">Yazar</th>
+                    <th scope="col">Kategori</th>
+                    <th scope="col">Durum</th>
+                    <th scope="col">Tarih</th>
+                    <th scope="col">Görüntülenme</th>
+                    <th scope="col">İşlemler</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for story in stories %}
+                <tr data-status="{{ story.status }}">
+                    <td>{{ story.id }}</td>
+                    <td>
+                        <a href="{{ url_for('story', story_id=story.id) }}" target="_blank">{{ story.title }}</a>
+                    </td>
+                    <td>
+                        <a href="{{ url_for('admin_user_detail', user_id=story.user_id) }}">{{ story.author.username }}</a>
+                    </td>
+                    <td>{{ story.category }}</td>
+                    <td>
+                        {% if story.status == 'ongoing' %}
+                        <span class="badge bg-info">Devam Ediyor</span>
+                        {% elif story.status == 'completed' %}
+                        <span class="badge bg-success">Tamamlandı</span>
+                        {% elif story.status == 'hiatus' %}
+                        <span class="badge bg-warning">Ara Verildi</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ story.date_posted.strftime('%d.%m.%Y') }}</td>
+                    <td>{{ story.views }}</td>
+                    <td>
+                        <div class="btn-group">
+                            <a href="{{ url_for('admin_story_detail', story_id=story.id) }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-info-circle"></i>
+                            </a>
+                            <a href="{{ url_for('story', story_id=story.id) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteStoryModal{{ story.id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            
+                            <!-- Delete Story Modal -->
+                            <div class="modal fade" id="deleteStoryModal{{ story.id }}" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Hikayeyi Sil</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>
+                                                <strong>{{ story.title }}</strong> hikayesini silmek istediğinize emin misiniz?
+                                                Bu işlem geri alınamaz ve hikayenin tüm bölümleri ve yorumları silinecektir.
+                                            </p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                            <form action="{{ url_for('admin_story_delete', story_id=story.id) }}" method="POST">
+                                                <button type="submit" class="btn btn-danger">Hikayeyi Sil</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Search functionality
+    const searchInput = document.getElementById('storySearch');
+    const storiesTable = document.getElementById('storiesTable');
+    const rows = storiesTable.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    
+    searchInput.addEventListener('keyup', function() {
+        const query = searchInput.value.toLowerCase();
+        
+        for (let i = 0; i < rows.length; i++) {
+            const title = rows[i].getElementsByTagName('td')[1].textContent.toLowerCase();
+            const author = rows[i].getElementsByTagName('td')[2].textContent.toLowerCase();
+            const category = rows[i].getElementsByTagName('td')[3].textContent.toLowerCase();
+            
+            if (title.includes(query) || author.includes(query) || category.includes(query)) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+    });
+    
+    // Filter functionality
+    const filterItems = document.querySelectorAll('.filter-item');
+    filterItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const filter = this.getAttribute('data-filter');
+            
+            for (let i = 0; i < rows.length; i++) {
+                const status = rows[i].getAttribute('data-status');
+                if (filter === 'all' || status === filter) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
+                }
+            }
+            
+            document.getElementById('filterDropdown').innerHTML = 
+                `<i class="fas fa-filter me-1"></i> ${this.textContent}`;
+        });
+    });
+});
+</script>
+{% endblock %} 

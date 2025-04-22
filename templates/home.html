@@ -22,6 +22,178 @@
         </div>
     </div>
 
+    <!-- Öne Çıkan Hikayeler Bölümü -->
+    <div class="featured-stories mb-5">
+        <h2 class="mb-3 text-dark font-weight-bold">Öne Çıkan Hikayeler</h2>
+        <ul class="nav nav-tabs mb-3" id="featuredTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-bold text-dark" id="weekly-tab" data-bs-toggle="tab" data-bs-target="#weekly-tab-pane" type="button" role="tab">Haftanın Öne Çıkanları (En iyi 5)</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold text-dark" id="monthly-tab" data-bs-toggle="tab" data-bs-target="#monthly-tab-pane" type="button" role="tab">Ayın Öne Çıkanları (En iyi 5)</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold text-dark" id="editor-tab" data-bs-toggle="tab" data-bs-target="#editor-tab-pane" type="button" role="tab">Editörün Seçimleri (En iyi 10)</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold text-dark" id="winner-tab" data-bs-toggle="tab" data-bs-target="#winner-tab-pane" type="button" role="tab">StoryNEST Kazananları</button>
+            </li>
+        </ul>
+        <div class="tab-content" id="featuredTabsContent">
+            <!-- Haftanın Öne Çıkanları -->
+            <div class="tab-pane fade show active" id="weekly-tab-pane" role="tabpanel" aria-labelledby="weekly-tab" tabindex="0">
+                <div class="featured-carousel">
+                    <div class="row featured-slider">
+                        {% for story in weekly_popular %}
+                        <div class="col-md-4 featured-slide">
+                            <div class="card h-100 shadow-sm">
+                                <div class="position-relative">
+                                    <span class="position-absolute top-0 start-0 badge bg-primary m-2">Haftanın #{{ loop.index }}</span>
+                                    <img src="{{ url_for('static', filename='story_covers/' + story.cover_image) }}" 
+                                         class="card-img-top" alt="{{ story.title }}" 
+                                         style="height: 180px; object-fit: cover;">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ story.title }}</h5>
+                                    <p class="card-text small text-muted mb-2">
+                                        <i class="fas fa-user me-1"></i>{{ story.author.username }}
+                                        <span class="mx-1">•</span>
+                                        <i class="fas fa-eye me-1"></i>{{ story.views }}
+                                        <span class="mx-1">•</span>
+                                        <i class="fas fa-heart me-1"></i>{{ story.likes|length }}
+                                    </p>
+                                    <p class="card-text small">{{ story.summary[:100] }}{% if story.summary|length > 100 %}...{% endif %}</p>
+                                    <a href="{{ url_for('story', story_id=story.id) }}" class="btn btn-sm btn-outline-primary">Okumaya Başla</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="col-12 featured-empty-state">
+                            <i class="fas fa-calendar-week text-muted mb-3" style="font-size: 2rem;"></i>
+                            <h4 class="text-muted my-2">Henüz haftalık öne çıkan hikaye bulunmuyor</h4>
+                            <p class="text-muted">Haftalık popüler hikayeler burada gösterilecektir.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ayın Öne Çıkanları -->
+            <div class="tab-pane fade" id="monthly-tab-pane" role="tabpanel" aria-labelledby="monthly-tab" tabindex="0">
+                <div class="featured-carousel">
+                    <div class="row featured-slider">
+                        {% for story in monthly_popular %}
+                        <div class="col-md-4 featured-slide">
+                            <div class="card h-100 shadow-sm">
+                                <div class="position-relative">
+                                    <span class="position-absolute top-0 start-0 badge bg-success m-2">Ayın #{{ loop.index }}</span>
+                                    <img src="{{ url_for('static', filename='story_covers/' + story.cover_image) }}" 
+                                         class="card-img-top" alt="{{ story.title }}" 
+                                         style="height: 180px; object-fit: cover;">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ story.title }}</h5>
+                                    <p class="card-text small text-muted mb-2">
+                                        <i class="fas fa-user me-1"></i>{{ story.author.username }}
+                                        <span class="mx-1">•</span>
+                                        <i class="fas fa-eye me-1"></i>{{ story.views }}
+                                        <span class="mx-1">•</span>
+                                        <i class="fas fa-heart me-1"></i>{{ story.likes|length }}
+                                    </p>
+                                    <p class="card-text small">{{ story.summary[:100] }}{% if story.summary|length > 100 %}...{% endif %}</p>
+                                    <a href="{{ url_for('story', story_id=story.id) }}" class="btn btn-sm btn-outline-primary">Okumaya Başla</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="col-12 featured-empty-state">
+                            <i class="fas fa-calendar-alt text-muted mb-3" style="font-size: 2rem;"></i>
+                            <h4 class="text-muted my-2">Henüz aylık öne çıkan hikaye bulunmuyor</h4>
+                            <p class="text-muted">Aylık popüler hikayeler burada gösterilecektir.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Editörün Seçimleri -->
+            <div class="tab-pane fade" id="editor-tab-pane" role="tabpanel" aria-labelledby="editor-tab" tabindex="0">
+                <div class="featured-carousel">
+                    <div class="row featured-slider">
+                        {% for story in editor_picks %}
+                        <div class="col-md-4 featured-slide">
+                            <div class="card h-100 shadow-sm">
+                                <div class="position-relative">
+                                    <span class="position-absolute top-0 start-0 badge bg-info m-2">Editör #{{ loop.index }}</span>
+                                    <img src="{{ url_for('static', filename='story_covers/' + story.cover_image) }}" 
+                                         class="card-img-top" alt="{{ story.title }}" 
+                                         style="height: 180px; object-fit: cover;">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ story.title }}</h5>
+                                    <p class="card-text small text-muted mb-2">
+                                        <i class="fas fa-user me-1"></i>{{ story.author.username }}
+                                        <span class="mx-1">•</span>
+                                        <i class="fas fa-eye me-1"></i>{{ story.views }}
+                                        <span class="mx-1">•</span>
+                                        <i class="fas fa-heart me-1"></i>{{ story.likes|length }}
+                                    </p>
+                                    <p class="card-text small">{{ story.summary[:100] }}{% if story.summary|length > 100 %}...{% endif %}</p>
+                                    <a href="{{ url_for('story', story_id=story.id) }}" class="btn btn-sm btn-outline-primary">Okumaya Başla</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="col-12 featured-empty-state">
+                            <i class="fas fa-user-edit text-muted mb-3" style="font-size: 2rem;"></i>
+                            <h4 class="text-muted my-2">Henüz editör seçimi hikaye bulunmuyor</h4>
+                            <p class="text-muted">Editörlerimizin seçtiği hikayeler burada gösterilecektir.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- StoryNEST Kazananları -->
+            <div class="tab-pane fade" id="winner-tab-pane" role="tabpanel" aria-labelledby="winner-tab" tabindex="0">
+                <div class="featured-carousel">
+                    <div class="row featured-slider">
+                        {% for story in winners %}
+                        <div class="col-md-4 featured-slide">
+                            <div class="card h-100 shadow-sm">
+                                <div class="position-relative">
+                                    <span class="position-absolute top-0 start-0 badge bg-warning text-dark m-2">{{ story.award }} #{{ loop.index }}</span>
+                                    <img src="{{ url_for('static', filename='story_covers/' + story.cover_image) }}" 
+                                         class="card-img-top" alt="{{ story.title }}" 
+                                         style="height: 180px; object-fit: cover;">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ story.title }}</h5>
+                                    <p class="card-text small text-muted mb-2">
+                                        <i class="fas fa-user me-1"></i>{{ story.author.username }}
+                                        <span class="mx-1">•</span>
+                                        <i class="fas fa-eye me-1"></i>{{ story.views }}
+                                        <span class="mx-1">•</span>
+                                        <i class="fas fa-heart me-1"></i>{{ story.likes|length }}
+                                    </p>
+                                    <p class="card-text small">{{ story.summary[:100] }}{% if story.summary|length > 100 %}...{% endif %}</p>
+                                    <a href="{{ url_for('story', story_id=story.id) }}" class="btn btn-sm btn-outline-primary">Okumaya Başla</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="col-12 featured-empty-state">
+                            <i class="fas fa-trophy text-muted mb-3" style="font-size: 2rem;"></i>
+                            <h4 class="text-muted my-2">Henüz ödül kazanan hikaye bulunmuyor</h4>
+                            <p class="text-muted">Ödül kazanan hikayeler burada gösterilecektir.</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <!-- Kategoriler -->
         <div class="col-md-3 mb-4">
@@ -129,18 +301,210 @@
 {% block styles %}
 <style>
 .story-card {
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
     border: none;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: #fff;
 }
 
 .story-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
 }
 
+.story-card:hover .card-title {
+    color: #0056b3;
+}
+
+.story-card:hover .card-text {
+    color: #000;
+}
+
+.story-card:hover .text-muted {
+    color: #444 !important;
+}
+
+.card-title {
+    color: #1a1a1a;
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+    transition: color 0.2s;
+}
+
+.card-text {
+    color: #333;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.text-muted {
+    color: #555 !important;
+    font-weight: 500;
+}
+
+.badge {
+    font-weight: 600;
+    padding: 0.5em 0.8em;
+}
+
+.btn {
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+}
+
+.btn-outline-primary:hover {
+    color: #fff;
+}
+
+/* Kategori linkleri için stil */
+.list-group-item {
+    color: #333;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.list-group-item:hover {
+    color: #0056b3;
+    background-color: #f8f9fa;
+}
+
+.list-group-item.active {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Öne Çıkan Hikayeler başlığı */
+.featured-stories h2 {
+    color: #1a1a1a;
+    font-weight: 800;
+    border-left: 5px solid #0d6efd;
+    padding-left: 15px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Tab menü stilleri */
+.nav-tabs .nav-link {
+    color: #000000;
+    font-weight: 700;
+    padding: 12px 20px;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.2s;
+    font-size: 15px;
+}
+
+.nav-tabs .nav-link:hover {
+    color: #000000;
+    background-color: #f8f9fa;
+    border-color: transparent;
+}
+
+.nav-tabs .nav-link.active {
+    color: #000000;
+    background-color: #fff;
+    border-bottom: 3px solid #0d6efd;
+    font-weight: 800;
+}
+
+/* Boş durum için stil */
+.featured-empty-state {
+    min-height: 250px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+    border: 2px dashed #dee2e6;
+    padding: 2rem;
+}
+
+.featured-empty-state i {
+    color: #6c757d;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.featured-empty-state h4 {
+    color: #343a40;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.featured-empty-state p {
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Hikayeler bölümü için otomatik kaydırma */
+.stories-container {
+    overflow: hidden;
+    position: relative;
+    padding: 0;
+}
+
+.stories-slider {
+    display: flex;
+    transition: transform 0.5s ease;
+    animation: slideStories 20s linear infinite;
+}
+
+@keyframes slideStories {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.stories-slider:hover {
+    animation-play-state: paused;
+}
+
+.story-slide {
+    flex: 0 0 50%;
+    padding: 0 10px;
+}
+
+/* Mobil görünüm */
+@media (max-width: 768px) {
+    .story-slide {
+        flex: 0 0 100%;
+    }
+    
+    .card-title {
+        font-size: 1.1rem;
+    }
+    
+    .featured-stories h2 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Beğeni ve yorum ikonları */
+.fa-heart, .fa-comment {
+    transition: transform 0.2s;
+}
+
+.fa-heart:hover, .fa-comment:hover {
+    transform: scale(1.2);
+}
+
+.fa-heart.text-danger {
+    color: #dc3545 !important;
+}
+
+/* Kapak resmi hover efekti */
 .card-img-top {
-    border-top-left-radius: calc(0.375rem - 1px);
-    border-top-right-radius: calc(0.375rem - 1px);
+    transition: filter 0.3s;
+}
+
+.story-card:hover .card-img-top {
+    filter: brightness(1.1);
 }
 </style>
 {% endblock %}
@@ -168,13 +532,11 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.json())
             .then(data => {
-                // Beğeni durumuna göre ikonu güncelle
                 if (data.status === 'liked') {
                     heartIcon.classList.add('text-danger');
                 } else {
                     heartIcon.classList.remove('text-danger');
                 }
-                // Beğeni sayısını güncelle
                 likeCount.textContent = data.likes;
             })
             .catch(error => console.error('Error:', error));

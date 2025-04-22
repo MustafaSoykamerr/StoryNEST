@@ -1,0 +1,105 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Kullanıcı Düzenle{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Kullanıcı Düzenle</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Kullanıcılara Dön
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold">{{ user.username }} Kullanıcısını Düzenle</h6>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin_user_edit', user_id=user.id) }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Kullanıcı Adı</label>
+                        <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">E-posta Adresi</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Şifre (Değiştirmek istemiyorsanız boş bırakın)</label>
+                        <input type="password" class="form-control" id="password" name="password">
+                        <div class="form-text">Şifreyi değiştirmek istemiyorsanız boş bırakın.</div>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="isAdmin" name="is_admin" {% if user.is_admin %}checked{% endif %}>
+                        <label class="form-check-label" for="isAdmin">Yönetici</label>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="isEditor" name="is_editor" {% if user.is_editor %}checked{% endif %}>
+                        <label class="form-check-label" for="isEditor">Editör</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Kaydet</button>
+                    <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">İptal</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold">Profil Bilgileri</h6>
+            </div>
+            <div class="card-body text-center">
+                <img src="{{ url_for('static', filename='profile_pics/' + user.image_file) }}" 
+                     class="rounded-circle mb-3" 
+                     width="120" height="120"
+                     alt="{{ user.username }}">
+                <h5>{{ user.username }}</h5>
+                <p class="text-muted">{{ user.email }}</p>
+                <div class="small text-muted mb-2">Kayıt tarihi: {{ user.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+                <div class="small text-muted mb-3">Son giriş: {{ user.last_login.strftime('%d.%m.%Y %H:%M') }}</div>
+                
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('profile', username=user.username) }}" class="btn btn-sm btn-outline-info">
+                        <i class="fas fa-user me-1"></i> Profili Görüntüle
+                    </a>
+                    {% if not user.is_admin or current_user.id != user.id %}
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteUserModal">
+                        <i class="fas fa-trash me-1"></i> Kullanıcıyı Sil
+                    </button>
+                    
+                    <!-- Delete User Modal -->
+                    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Kullanıcıyı Sil</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>
+                                        <strong>{{ user.username }}</strong> kullanıcısını silmek istediğinize emin misiniz?
+                                        Bu işlem geri alınamaz ve kullanıcının tüm içerikleri silinecektir.
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                    <form action="{{ url_for('admin_user_delete', user_id=user.id) }}" method="POST">
+                                        <button type="submit" class="btn btn-danger">Kullanıcıyı Sil</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

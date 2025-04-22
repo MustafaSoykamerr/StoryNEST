@@ -1,0 +1,196 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Kullanıcı Detayı{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Kullanıcı Detayı</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('admin_users') }}" class="btn btn-sm btn-outline-secondary me-2">
+            <i class="fas fa-arrow-left me-1"></i> Kullanıcılara Dön
+        </a>
+        <a href="{{ url_for('admin_user_edit', user_id=user.id) }}" class="btn btn-sm btn-primary">
+            <i class="fas fa-edit me-1"></i> Düzenle
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Kullanıcı Profil Kartı -->
+    <div class="col-lg-4 mb-4">
+        <div class="card shadow">
+            <div class="card-body text-center">
+                <img src="{{ url_for('static', filename='profile_pics/' + user.image_file) }}" 
+                     class="rounded-circle mb-3" 
+                     width="150" height="150"
+                     alt="{{ user.username }}">
+                <h4 class="mb-0">{{ user.username }}</h4>
+                <p class="text-muted mb-1">{{ user.email }}</p>
+                
+                {% if user.is_admin %}
+                <span class="badge bg-primary mb-3">Yönetici</span>
+                {% endif %}
+                
+                <div class="d-grid gap-2 mt-3">
+                    <a href="{{ url_for('profile', username=user.username) }}" class="btn btn-sm btn-outline-info" target="_blank">
+                        <i class="fas fa-external-link-alt me-1"></i> Site Profilini Görüntüle
+                    </a>
+                    <a href="{{ url_for('admin_user_edit', user_id=user.id) }}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-edit me-1"></i> Kullanıcıyı Düzenle
+                    </a>
+                </div>
+            </div>
+            <div class="card-footer bg-light">
+                <div class="row text-center">
+                    <div class="col">
+                        <span class="d-block">{{ user.stories|length }}</span>
+                        <small class="text-muted">Hikaye</small>
+                    </div>
+                    <div class="col">
+                        <span class="d-block">{{ user.comments|length }}</span>
+                        <small class="text-muted">Yorum</small>
+                    </div>
+                    <div class="col">
+                        <span class="d-block">{{ user.likes|length }}</span>
+                        <small class="text-muted">Beğeni</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Kullanıcı Detayları -->
+        <div class="card shadow mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">Kullanıcı Bilgileri</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <small class="text-muted d-block">ID</small>
+                    <div>{{ user.id }}</div>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Kayıt Tarihi</small>
+                    <div>{{ user.created_at.strftime('%d.%m.%Y %H:%M') }}</div>
+                </div>
+                <div class="mb-2">
+                    <small class="text-muted d-block">Son Giriş</small>
+                    <div>{{ user.last_login.strftime('%d.%m.%Y %H:%M') }}</div>
+                </div>
+                {% if user.location %}
+                <div class="mb-2">
+                    <small class="text-muted d-block">Konum</small>
+                    <div>{{ user.location }}</div>
+                </div>
+                {% endif %}
+                {% if user.social_media %}
+                <div class="mb-2">
+                    <small class="text-muted d-block">Sosyal Medya</small>
+                    <div>{{ user.social_media }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Kullanıcı Hikayeleri -->
+    <div class="col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">Kullanıcı Hikayeleri</h6>
+            </div>
+            <div class="table-responsive">
+                {% if user.stories %}
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Başlık</th>
+                            <th>Kategori</th>
+                            <th>Oluşturma Tarihi</th>
+                            <th>Görüntülenme</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for story in user.stories %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('story', story_id=story.id) }}" target="_blank">{{ story.title }}</a>
+                            </td>
+                            <td>{{ story.category }}</td>
+                            <td>{{ story.date_posted.strftime('%d.%m.%Y') }}</td>
+                            <td>{{ story.views }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('story', story_id=story.id) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteStoryModal{{ story.id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    
+                                    <!-- Delete Story Modal -->
+                                    <div class="modal fade" id="deleteStoryModal{{ story.id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Hikayeyi Sil</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p>"{{ story.title }}" hikayesini silmek istediğinize emin misiniz?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                                    <form action="{{ url_for('admin_story_delete', story_id=story.id) }}" method="POST">
+                                                        <button type="submit" class="btn btn-danger">Hikayeyi Sil</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="card-body text-center py-5">
+                    <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                    <p class="mb-0">Bu kullanıcı henüz hikaye paylaşmamış.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Kullanıcı Yorumları -->
+        <div class="card shadow">
+            <div class="card-header">
+                <h6 class="mb-0">Kullanıcı Yorumları</h6>
+            </div>
+            <div class="card-body">
+                {% if user.comments %}
+                <div class="list-group">
+                    {% for comment in user.comments %}
+                    <div class="list-group-item">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">
+                                <a href="{{ url_for('story', story_id=comment.story_id) }}">{{ comment.story.title }}</a>
+                            </h6>
+                            <small>{{ comment.date_posted.strftime('%d.%m.%Y %H:%M') }}</small>
+                        </div>
+                        <p class="mb-1">{{ comment.content }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-comment fa-3x text-muted mb-3"></i>
+                    <p class="mb-0">Bu kullanıcı henüz yorum yapmamış.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

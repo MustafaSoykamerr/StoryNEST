@@ -14,25 +14,49 @@
                     </div>
                     <div class="col-md-8">
                         <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <h1 class="card-title">{{ story.title }}</h1>
+                            <!-- Hikaye Başlığı ve Menü -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h1 class="mb-0">{{ story.title }}</h1>
                                 {% if current_user == story.author %}
-                                <div class="dropdown">
-                                    <button class="btn btn-light btn-sm" type="button" data-bs-toggle="dropdown">
-                                        <i class="fas fa-ellipsis-v"></i>
-                                    </button>
-                                    <ul class="dropdown-menu">
-                                        <li>
-                                            <a class="dropdown-item" href="{{ url_for('edit_story', story_id=story.id) }}">
-                                                <i class="fas fa-edit"></i> Düzenle
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <button class="dropdown-item text-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
-                                                <i class="fas fa-trash"></i> Sil
-                                            </button>
-                                        </li>
-                                    </ul>
+                                <div class="story-actions">
+                                    <div class="dropdown">
+                                        <button class="btn btn-light btn-action" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center" href="{{ url_for('edit_story', story_id=story.id) }}">
+                                                    <i class="fas fa-edit me-2 text-primary"></i>
+                                                    <span>Düzenle</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center" href="#" data-bs-toggle="modal" data-bs-target="#changeStatusModal">
+                                                    <i class="fas fa-sync-alt me-2 text-info"></i>
+                                                    <span>Durumu Değiştir</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center" href="{{ url_for('add_chapter', story_id=story.id) }}">
+                                                    <i class="fas fa-plus me-2 text-success"></i>
+                                                    <span>Bölüm Ekle</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center" href="{{ url_for('add_collaborator', story_id=story.id) }}">
+                                                    <i class="fas fa-users me-2 text-warning"></i>
+                                                    <span>Ortak Yazar Ekle</span>
+                                                </a>
+                                            </li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li>
+                                                <a class="dropdown-item d-flex align-items-center text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteStoryModal">
+                                                    <i class="fas fa-trash-alt me-2"></i>
+                                                    <span>Sil</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
                                 {% endif %}
                             </div>
@@ -54,6 +78,13 @@
                                 <span class="me-3" title="Beğeni"><i class="fas fa-heart"></i> {{ story.likes|length }}</span>
                                 <span class="me-3" title="Yorum"><i class="fas fa-comment"></i> {{ story.comments|length }}</span>
                                 <span title="Kategori"><i class="fas fa-bookmark"></i> {{ story.category }}</span>
+                                {% if story.status == 'ongoing' %}
+                                <span class="ms-3 badge bg-info">Devam Ediyor</span>
+                                {% elif story.status == 'completed' %}
+                                <span class="ms-3 badge bg-success">Tamamlandı</span>
+                                {% elif story.status == 'hiatus' %}
+                                <span class="ms-3 badge bg-warning">Ara Verildi</span>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -122,8 +153,7 @@
                                     </small>
                                 </div>
                                 {% if current_user == comment.author %}
-                                <button class="btn btn-link btn-sm text-danger p-0" 
-                                        onclick="deleteComment({{ comment.id }})">
+                                <button class="btn btn-link btn-sm text-danger p-0 delete-comment-btn" data-comment-id="{{ comment.id }}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                                 {% endif %}
@@ -208,21 +238,65 @@
     </div>
 </div>
 
-<!-- Delete Modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Hikayeyi Sil</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<!-- Delete Story Modal -->
+<div class="modal fade" id="deleteStoryModal" tabindex="-1" aria-labelledby="deleteStoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-danger" id="deleteStoryModalLabel">Hikayeyi Sil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p>Bu hikayeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+                <div class="text-center mb-4">
+                    <i class="fas fa-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                    <h4 class="mt-3">Emin misiniz?</h4>
+                    <p class="text-muted">"{{ story.title }}" başlıklı hikayeyi silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
+                </div>
+                <form action="{{ url_for('delete_story', story_id=story.id) }}" method="post">
+                    <div class="d-flex justify-content-center gap-2">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">İptal</button>
+                        <button type="submit" class="btn btn-danger">Sil</button>
+                    </div>
+                </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                <form action="{{ url_for('delete_story', story_id=story.id) }}" method="POST" class="d-inline">
-                    <button type="submit" class="btn btn-danger">Sil</button>
+        </div>
+    </div>
+</div>
+
+<!-- Change Status Modal -->
+<div class="modal fade" id="changeStatusModal" tabindex="-1" aria-labelledby="changeStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header border-0">
+                <h5 class="modal-title" id="changeStatusModalLabel">Hikaye Durumunu Değiştir</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('story_toggle_status', story_id=story.id) }}" method="post">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold mb-3">Mevcut Durum:</label>
+                        <div class="d-flex align-items-center gap-2">
+                            {% if story.status == 'ongoing' %}
+                            <span class="badge bg-primary">Devam Ediyor</span>
+                            {% elif story.status == 'completed' %}
+                            <span class="badge bg-success">Tamamlandı</span>
+                            {% elif story.status == 'hiatus' %}
+                            <span class="badge bg-warning">Ara Verildi</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Yeni Durum:</label>
+                        <select name="status" class="form-select">
+                            <option value="ongoing" {% if story.status == 'ongoing' %}selected{% endif %}>Devam Ediyor</option>
+                            <option value="completed" {% if story.status == 'completed' %}selected{% endif %}>Tamamlandı</option>
+                            <option value="hiatus" {% if story.status == 'hiatus' %}selected{% endif %}>Ara Verildi</option>
+                        </select>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">İptal</button>
+                        <button type="submit" class="btn btn-primary">Değiştir</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -232,6 +306,17 @@
 
 {% block scripts %}
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Delete comment buttons
+    const deleteButtons = document.querySelectorAll('.delete-comment-btn');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const commentId = this.getAttribute('data-comment-id');
+            deleteComment(commentId);
+        });
+    });
+});
+
 function deleteComment(commentId) {
     if (confirm('Bu yorumu silmek istediğinizden emin misiniz?')) {
         fetch(`/comment/${commentId}/delete`, {
@@ -245,3 +330,81 @@ function deleteComment(commentId) {
 }
 </script>
 {% endblock %}
+
+<style>
+.btn-action {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    transition: all 0.2s;
+    border: 1px solid #dee2e6;
+    background: white;
+}
+
+.btn-action:hover {
+    background: #f8f9fa;
+    border-color: #ced4da;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dropdown-menu {
+    border: none;
+    border-radius: 12px;
+    padding: 0.5rem;
+    min-width: 200px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+}
+
+.dropdown-item {
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    transform: translateX(3px);
+}
+
+.dropdown-item i {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.dropdown-divider {
+    margin: 0.5rem 0;
+    border-color: #f1f1f1;
+}
+
+.text-danger:hover {
+    background-color: #fff5f5;
+}
+
+.story-actions {
+    position: relative;
+}
+
+.story-actions .dropdown-menu {
+    margin-top: 10px;
+}
+
+.story-actions .dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 16px;
+    width: 12px;
+    height: 12px;
+    background: white;
+    transform: rotate(45deg);
+    border-radius: 2px;
+    box-shadow: -2px -2px 4px rgba(0,0,0,0.05);
+}
+</style>
